@@ -61,18 +61,17 @@ const product = style({
   padding: "1rem",
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "center",
   gap: "0.2rem",
   position: "relative",
 });
 
 const productTitle = style({
-  // lineHeight: "24px",
-  // fontSize: "17px",
   marginBottom: "0.3rem",
 });
 
 const productIcon = style({
-  transform: "scale(1.1)",
+  display: "block",
 });
 
 const productText = style({

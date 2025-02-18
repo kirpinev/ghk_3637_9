@@ -2,11 +2,15 @@ import { ButtonMobile } from "@alfalab/core-components/button/mobile";
 
 import { Typography } from "@alfalab/core-components/typography";
 import React, { useState } from "react";
-import smart from "./assets/smart.png";
-import drums from "./assets/drums.png";
-import smileArrow from "./assets/smile-arrow.png";
-import gift from "./assets/gift.png";
-import cashback from "./assets/cashback.png";
+import imageGH1 from "./assets/imageGH1.png";
+import imageGH2 from "./assets/imageGH2.png";
+import imageGH3 from "./assets/imageGH3.png";
+import imageGH4 from "./assets/imageGH4.png";
+import imageGH5 from "./assets/imageGH5.png";
+import imageGH6 from "./assets/imageGH6.png";
+import imageGH7 from "./assets/imageGH7.png";
+import imageGH8 from "./assets/imageGH8.png";
+import hero from "./assets/hero.png";
 import { LS, LSKeys } from "./ls";
 import { appSt } from "./style.css";
 import { ThxLayout } from "./thx/ThxLayout";
@@ -35,56 +39,56 @@ const categories: Array<Categories> = [
       {
         title: "Кредитные каникулы",
         text: "До 6 месяцев в году",
-        image: smileArrow,
+        image: imageGH1,
         name: "one_cashback",
         value: 0,
       },
       {
         title: "Настройка платежа",
         text: "Можно уменьшить платёж по кредиту в любой момент",
-        image: drums,
+        image: imageGH2,
         name: "one_baraban",
         value: 0,
       },
       {
         title: "Выбор даты платежа",
         text: "Вносите деньги в удобные дни",
-        image: cashback,
+        image: imageGH3,
         name: "limit_cashback",
         value: 0,
       },
       {
         title: "Гибкий график платежей",
         text: "Можете пропустить месяц, а в следующем заплатить больше",
-        image: gift,
+        image: imageGH4,
         name: "secret_cashback",
         value: 0,
       },
       {
         title: "Беспроцентная кредитная линия",
         text: "Можете взять до 30 000 ₽ без % на мелкие расходы",
-        image: gift,
+        image: imageGH5,
         name: "secret_cashback",
         value: 0,
       },
       {
         title: "Защита от просрочки",
         text: "Автоматически оплатим кредит с вашего счёта",
-        image: gift,
+        image: imageGH6,
         name: "secret_cashback",
         value: 0,
       },
       {
         title: "Контроль кредитной истории",
         text: "Защита от мошенников, заявки на кредит, кредитный рейтинг",
-        image: gift,
+        image: imageGH7,
         name: "secret_cashback",
         value: 0,
       },
       {
         title: "Переводы без ограничений",
         text: "Переводите кредитные деньги физическим и юридическим лицам бесплатно",
-        image: gift,
+        image: imageGH8,
         name: "secret_cashback",
         value: 0,
       },
@@ -93,7 +97,6 @@ const categories: Array<Categories> = [
 ];
 
 export const App = () => {
-  const [thxShow, setThx] = useState(LS.getItem(LSKeys.ShowThx, false));
   const [contacts, setContacts] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [optionsCount, setOptionsCount] = useState(3);
@@ -160,7 +163,7 @@ export const App = () => {
     }
   };
 
-  if (thxShow) {
+  if (LS.getItem(LSKeys.ShowThx, false)) {
     return <ThxLayout />;
   }
 
@@ -170,7 +173,6 @@ export const App = () => {
         selectedItems={[]}
         handleThx={() => {
           LS.setItem(LSKeys.ShowThx, true);
-          setThx(true);
         }}
       />
     );
@@ -180,12 +182,13 @@ export const App = () => {
     <>
       <div className={appSt.container}>
         <div className={appSt.box}>
-          <img src={smart} alt="Картинка Альфа-Смарт" />
+          <img src={hero} alt="Картинка Альфа-Смарт" />
           <Typography.TitleResponsive
             tag="h1"
             view="medium"
             font="system"
             weight="bold"
+            style={{ padding: "0 1rem" }}
           >
             Прокачайте ваш кредит
           </Typography.TitleResponsive>

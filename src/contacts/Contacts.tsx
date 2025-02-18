@@ -83,7 +83,7 @@ export const Contacts = ({ selectedItems, handleThx }: ThxLayoutProps) => {
           loading={loading}
           onClick={submit}
           view="primary"
-          href=""
+          href="https://alfa.me/p0r7na"
         >
           Отправить
         </ButtonMobile>

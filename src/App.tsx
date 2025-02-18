@@ -3,7 +3,6 @@ import { ButtonMobile } from "@alfalab/core-components/button/mobile";
 import { Typography } from "@alfalab/core-components/typography";
 import React, { useState } from "react";
 import smart from "./assets/smart.png";
-import smile from "./assets/smile.png";
 import drums from "./assets/drums.png";
 import smileArrow from "./assets/smile-arrow.png";
 import gift from "./assets/gift.png";
@@ -14,6 +13,7 @@ import { ThxLayout } from "./thx/ThxLayout";
 import { Gap } from "@alfalab/core-components/gap";
 import { Plate } from "@alfalab/core-components/plate";
 import { StatusBadge } from "@alfalab/core-components/status-badge";
+import { Contacts } from "./contacts/Contacts.tsx";
 
 interface Product {
   title: string;
@@ -93,8 +93,8 @@ const categories: Array<Categories> = [
 ];
 
 export const App = () => {
-  const [loading, setLoading] = useState(false);
   const [thxShow, setThx] = useState(LS.getItem(LSKeys.ShowThx, false));
+  const [contacts, setContacts] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [optionsCount, setOptionsCount] = useState(3);
   const isFiveOptionsSelected = optionsCount > 0 && optionsCount <= 3;
@@ -124,28 +124,28 @@ export const App = () => {
     }
   };
 
-  const submit = () => {
-    const products: Record<string, number> = {};
-
-    selectedProducts.forEach((product) => {
-      products[product.name] = product.value;
-    });
-
-    categories.forEach((category) => {
-      category.products.forEach((product) => {
-        if (products[product.name] === undefined) {
-          products[product.name] = product.value;
-        }
-      });
-    });
-
-    setLoading(true);
-    Promise.resolve().then(() => {
-      LS.setItem(LSKeys.ShowThx, true);
-      setThx(true);
-      setLoading(false);
-    });
-  };
+  // const submit = () => {
+  //   const products: Record<string, number> = {};
+  //
+  //   selectedProducts.forEach((product) => {
+  //     products[product.name] = product.value;
+  //   });
+  //
+  //   categories.forEach((category) => {
+  //     category.products.forEach((product) => {
+  //       if (products[product.name] === undefined) {
+  //         products[product.name] = product.value;
+  //       }
+  //     });
+  //   });
+  //
+  //   setLoading(true);
+  //   Promise.resolve().then(() => {
+  //     LS.setItem(LSKeys.ShowThx, true);
+  //     setThx(true);
+  //     setLoading(false);
+  //   });
+  // };
 
   const optionText = (count: number) => {
     switch (count) {
@@ -162,6 +162,18 @@ export const App = () => {
 
   if (thxShow) {
     return <ThxLayout />;
+  }
+
+  if (contacts) {
+    return (
+      <Contacts
+        selectedItems={[]}
+        handleThx={() => {
+          LS.setItem(LSKeys.ShowThx, true);
+          setThx(true);
+        }}
+      />
+    );
   }
 
   return (
@@ -182,43 +194,28 @@ export const App = () => {
           </Typography.Text>
         </div>
 
-        <div className={appSt.subscription}>
-          <img src={smile} alt="" width={24} height={24} />
-          <Typography.Text
-            view="primary-medium"
-            className={appSt.subscriptionText}
-          >
-            Подписка стоит 299 ₽, если тратите с карты 20 000 ₽ в месяц. Если
-            тратите меньше — 399 ₽
-          </Typography.Text>
-        </div>
+        <Gap size={4} />
 
-        <Gap size={8} />
-
-        {
-          <Plate
-            view={isFiveOptionsSelected ? "attention" : "positive"}
-            title={
-              isFiveOptionsSelected
-                ? `Выберите ${optionsCount} ${optionText(optionsCount)?.[0]}, ${optionText(optionsCount)?.[1]} хотите включить в вашу подписку`
-                : "Все 3 опции выбраны"
-            }
-            leftAddons={
-              <StatusBadge
-                view={
-                  isFiveOptionsSelected
-                    ? "attention-alert"
-                    : "positive-checkmark"
-                }
-              />
-            }
-          />
-        }
+        <Plate
+          view={isFiveOptionsSelected ? "attention" : "positive"}
+          title={
+            isFiveOptionsSelected
+              ? `Выберите ${optionsCount} ${optionText(optionsCount)?.[0]}, ${optionText(optionsCount)?.[1]} хотите включить в вашу подписку`
+              : "Все 3 опции выбраны"
+          }
+          leftAddons={
+            <StatusBadge
+              view={
+                isFiveOptionsSelected ? "attention-alert" : "positive-checkmark"
+              }
+            />
+          }
+        />
 
         <div className={appSt.products}>
           {categories.map((category) => (
             <React.Fragment key={category.title}>
-              <Gap size={8} />
+              <Gap size={4} />
               {category.products.map((product) => (
                 <div
                   className={appSt.product}
@@ -280,10 +277,11 @@ export const App = () => {
       <div className={appSt.bottomBtn}>
         <ButtonMobile
           disabled={selectedProducts.length !== 3}
-          loading={loading}
           block
           view="primary"
-          onClick={submit}
+          onClick={() => {
+            setContacts(true);
+          }}
         >
           Оформить подписку
         </ButtonMobile>

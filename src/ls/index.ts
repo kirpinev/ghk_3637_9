@@ -1,9 +1,11 @@
 export const enum LSKeys {
   ShowThx = "ab_show_thx_ghk_3637_9",
+  Contacts = "ab_show_contacts_ghk_3637_9",
 }
 
 export interface LSData {
   [LSKeys.ShowThx]: boolean | null;
+  [LSKeys.Contacts]: boolean | null;
 }
 
 const getItem = <K extends LSKeys>(

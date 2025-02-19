@@ -8,30 +8,27 @@ import { MaskedInput } from "@alfalab/core-components/masked-input";
 
 import { thxSt } from "./style.css";
 import { appSt } from "../style.css.ts";
-
-import { Service } from "../types.ts";
+import { sendDataToGAWithContacts } from "../utils/events.ts";
+import { LS, LSKeys } from "../ls";
 
 interface ThxLayoutProps {
-  selectedItems: Array<Service | null>;
-  handleThx: () => void;
+  configuredProducts: Record<string, number>;
 }
 
-export const Contacts = ({ selectedItems, handleThx }: ThxLayoutProps) => {
+export const Contacts = ({ configuredProducts }: ThxLayoutProps) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const submit = () => {
-    if (name && phone) {
-      console.log(selectedItems);
-      // const servicesObj = preparePayload(selectedItems);
-
-      setLoading(true);
-      Promise.resolve().then(() => {
-        setLoading(false);
-        handleThx();
-      });
-    }
+    LS.setItem(LSKeys.ShowThx, true);
+    setLoading(true);
+    sendDataToGAWithContacts({
+      ...configuredProducts,
+      contacts: `${name} ${phone}`,
+    }).then(() => {
+      setLoading(false);
+    });
   };
 
   return (

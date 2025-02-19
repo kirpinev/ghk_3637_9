@@ -1,24 +1,6 @@
-declare global {
-  interface Window {
-    dataLayer: unknown[];
-  }
-}
-
-export type Payload = {
-  one_cashback: number;
-  one_baraban: number;
-  limit_cashback: number;
-  secret_cashback: number;
-  online_kino: number;
-  sub_music: number;
-  internet: number;
-  free_pushes: number;
-  free_transfer: number;
-  free_cash: number;
-  alfa_schet: number;
-};
-
-export const sendDataToGA = async (payload: Payload) => {
+export const sendDataToGAWithoutContacts = async (
+  payload: Record<string, number>,
+) => {
   try {
     const now = new Date();
     const date = `${now.getFullYear()}-${
@@ -26,11 +8,36 @@ export const sendDataToGA = async (payload: Payload) => {
     }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycbwmaRDdSZMjNR3Cjw56j7fIdyJEPqLmlyNjxRr0-Xs9zgn5wjVPHDdTGKgmOjR95lPA/exec",
+      "https://script.google.com/macros/s/AKfycbyYwROw23A-n-Z6SKG9Ek7Krw3fiLglDP2SNQAU3V8S7hIxmAkxgGgQO_GIGk4A71OX/exec",
       {
         redirect: "follow",
         method: "POST",
-        body: JSON.stringify({ date, ...payload, variant: "ghk_3579_2" }),
+        body: JSON.stringify({ date, ...payload }),
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        },
+      },
+    );
+  } catch (error) {
+    console.error("Error!", error);
+  }
+};
+
+export const sendDataToGAWithContacts = async (
+  payload: Record<string, number | string>,
+) => {
+  try {
+    const now = new Date();
+    const date = `${now.getFullYear()}-${
+      now.getMonth() + 1
+    }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbyv4di4SLA8cZDaCwxj_5ys3J_N4tuvuWFyl_apI-WUu2YDvSRWL6eLnVrINAkEGuucuA/exec",
+      {
+        redirect: "follow",
+        method: "POST",
+        body: JSON.stringify({ date, ...payload }),
         headers: {
           "Content-Type": "text/plain;charset=utf-8",
         },

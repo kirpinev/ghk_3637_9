@@ -18,6 +18,7 @@ import { Gap } from "@alfalab/core-components/gap";
 import { Plate } from "@alfalab/core-components/plate";
 import { StatusBadge } from "@alfalab/core-components/status-badge";
 import { Contacts } from "./contacts/Contacts.tsx";
+import { sendDataToGAWithoutContacts } from "./utils/events.ts";
 
 interface Product {
   title: string;
@@ -40,56 +41,56 @@ const categories: Array<Categories> = [
         title: "Кредитные каникулы",
         text: "До 6 месяцев в году",
         image: imageGH1,
-        name: "one_cashback",
+        name: "credit_holidays",
         value: 0,
       },
       {
         title: "Настройка платежа",
         text: "Можно уменьшить платёж по кредиту в любой момент",
         image: imageGH2,
-        name: "one_baraban",
+        name: "nastroika_platezha",
         value: 0,
       },
       {
         title: "Выбор даты платежа",
         text: "Вносите деньги в удобные дни",
         image: imageGH3,
-        name: "limit_cashback",
+        name: "vybor_daty_platezha",
         value: 0,
       },
       {
         title: "Гибкий график платежей",
         text: "Можете пропустить месяц, а в следующем заплатить больше",
         image: imageGH4,
-        name: "secret_cashback",
+        name: "gibkiy_grafik_platezhey",
         value: 0,
       },
       {
         title: "Беспроцентная кредитная линия",
         text: "Можете взять до 30 000 ₽ без % на мелкие расходы",
         image: imageGH5,
-        name: "secret_cashback",
+        name: "no_percent_credit_line",
         value: 0,
       },
       {
         title: "Защита от просрочки",
         text: "Автоматически оплатим кредит с вашего счёта",
         image: imageGH6,
-        name: "secret_cashback",
+        name: "zashita_ot_prosrochki",
         value: 0,
       },
       {
         title: "Контроль кредитной истории",
         text: "Защита от мошенников, заявки на кредит, кредитный рейтинг",
         image: imageGH7,
-        name: "secret_cashback",
+        name: "credit_history_control",
         value: 0,
       },
       {
         title: "Переводы без ограничений",
         text: "Переводите кредитные деньги физическим и юридическим лицам бесплатно",
         image: imageGH8,
-        name: "secret_cashback",
+        name: "perevody_bez_ogranicheniy",
         value: 0,
       },
     ],
@@ -97,10 +98,14 @@ const categories: Array<Categories> = [
 ];
 
 export const App = () => {
+  const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [optionsCount, setOptionsCount] = useState(3);
   const isFiveOptionsSelected = optionsCount > 0 && optionsCount <= 3;
+  const [configuredProducts, setConfiguredProducts] = useState<
+    Record<string, number>
+  >({});
 
   const findProduct = (product: Product) => {
     return selectedProducts.find((option) => option.title === product.title);
@@ -127,28 +132,30 @@ export const App = () => {
     }
   };
 
-  // const submit = () => {
-  //   const products: Record<string, number> = {};
-  //
-  //   selectedProducts.forEach((product) => {
-  //     products[product.name] = product.value;
-  //   });
-  //
-  //   categories.forEach((category) => {
-  //     category.products.forEach((product) => {
-  //       if (products[product.name] === undefined) {
-  //         products[product.name] = product.value;
-  //       }
-  //     });
-  //   });
-  //
-  //   setLoading(true);
-  //   Promise.resolve().then(() => {
-  //     LS.setItem(LSKeys.ShowThx, true);
-  //     setThx(true);
-  //     setLoading(false);
-  //   });
-  // };
+  const submit = () => {
+    const products: Record<string, number> = {};
+
+    selectedProducts.forEach((product) => {
+      products[product.name] = product.value;
+    });
+
+    categories.forEach((category) => {
+      category.products.forEach((product) => {
+        if (products[product.name] === undefined) {
+          products[product.name] = product.value;
+        }
+      });
+    });
+
+    setConfiguredProducts(products);
+    setLoading(true);
+    sendDataToGAWithoutContacts({
+      ...(products as Record<string, number>),
+    }).then(() => {
+      setContacts(true);
+      setLoading(false);
+    });
+  };
 
   const optionText = (count: number) => {
     switch (count) {
@@ -168,14 +175,7 @@ export const App = () => {
   }
 
   if (contacts) {
-    return (
-      <Contacts
-        selectedItems={[]}
-        handleThx={() => {
-          LS.setItem(LSKeys.ShowThx, true);
-        }}
-      />
-    );
+    return <Contacts configuredProducts={configuredProducts} />;
   }
 
   return (
@@ -279,12 +279,11 @@ export const App = () => {
 
       <div className={appSt.bottomBtn}>
         <ButtonMobile
+          loading={loading}
           disabled={selectedProducts.length !== 3}
           block
           view="primary"
-          onClick={() => {
-            setContacts(true);
-          }}
+          onClick={submit}
         >
           Оформить подписку
         </ButtonMobile>
